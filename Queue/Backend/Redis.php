@@ -232,16 +232,20 @@ end';
 
     protected function connect()
     {
-        $this->redis = new \Redis();
-        $success = $this->redis->connect($this->host, $this->port, $this->timeout, null, 100);
+        // Modification: START
+        // $this->redis = new \Redis();
+        $this->redis = new \RedisCluster(NULL, Array('35.204.65.201:6379', '35.192.41.161:6380', '35.198.212.227:6381'), $this->timeout);
+        // $success = $this->redis->connect($this->host, $this->port, $this->timeout, null, 100);
+        $success = $this->redis->info();
 
-        if ($success && !empty($this->password)) {
+        /*if ($success && !empty($this->password)) {
             $success = $this->redis->auth($this->password);
         }
 
         if (!empty($this->database) || 0 === $this->database) {
             $this->redis->select($this->database);
-        }
+        }*/
+        // Modification: END
 
         return $success;
     }

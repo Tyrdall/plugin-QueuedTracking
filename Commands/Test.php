@@ -125,7 +125,9 @@ class Test extends ConsoleCommand
         $this->testRedis($redis, 'set', array('testKeyWithNx', 'value', array('nx')), 'testKeyWithNx', $output);
         $this->testRedis($redis, 'set', array('testKeyWithEx', 'value', array('ex' => 5)), 'testKeyWithEx', $output);
 
-        $backend->delete('foo');
+        // Modification: START
+        $backend->del('foo');
+        // Modification: END
         if (!$backend->setIfNotExists('foo', 'bar', 5)) {
             $output->writeln("setIfNotExists(foo, bar, 1) does not work, most likely we won't be able to acquire a lock:" . $redis->getLastError());
         } else{
@@ -175,7 +177,9 @@ class Test extends ConsoleCommand
             }
         }
 
-        $redis->delete('fooList');
+        // Modification: START
+        $redis->del('fooList');
+        // Modification: END
         $backend->appendValuesToList('fooList', array('value1', 'value2', 'value3'));
         $values = $backend->getFirstXValuesFromList('fooList', 2);
         if ($values == array('value1', 'value2')) {
@@ -197,7 +201,7 @@ class Test extends ConsoleCommand
         $output->writeln('<comment>Done</comment>');
     }
 
-    private function getRedisConfig(\Redis $redis, $configName)
+    private function getRedisConfig(\RedisCluster $redis, $configName)
     {
         $config = $redis->config('GET', $configName);
         $value = strtolower(array_shift($config));
@@ -205,10 +209,12 @@ class Test extends ConsoleCommand
         return $value;
     }
 
-    private function testRedis(\Redis $redis, $method, $params, $keyToCleanUp, OutputInterface $output)
+    private function testRedis(\RedisCluster $redis, $method, $params, $keyToCleanUp, OutputInterface $output)
     {
         if ($keyToCleanUp) {
-            $redis->delete($keyToCleanUp);
+            // Modification: START
+            $redis->del($keyToCleanUp);
+            // Modification: END
         }
 
         $result = call_user_func_array(array($redis, $method), $params);
@@ -222,7 +228,9 @@ class Test extends ConsoleCommand
         }
 
         if ($keyToCleanUp) {
-            $redis->delete($keyToCleanUp);
+            // Modification: START
+            $redis->del($keyToCleanUp);
+            // Modification: END
         }
     }
 }
