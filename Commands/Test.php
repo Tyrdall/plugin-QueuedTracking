@@ -96,7 +96,8 @@ class Test extends ConsoleCommand
 
         $redis = $backend->getConnection();
 
-        $evictionPolicy = $this->getRedisConfig($redis, 'maxmemory-policy');
+        // Modification: START
+        /*$evictionPolicy = $this->getRedisConfig($redis, 'maxmemory-policy');
         $output->writeln('MaxMemory Eviction Policy config: ' . $evictionPolicy);
 
         if ($evictionPolicy !== 'allkeys-lru' && $evictionPolicy !== 'noeviction') {
@@ -104,7 +105,8 @@ class Test extends ConsoleCommand
         }
 
         $evictionPolicy = $this->getRedisConfig($redis, 'maxmemory');
-        $output->writeln('MaxMemory config: ' . $evictionPolicy);
+        $output->writeln('MaxMemory config: ' . $evictionPolicy);*/
+        // Modification: END
 
         $output->writeln('');
         $output->writeln('<comment>Performing some tests:</comment>');
