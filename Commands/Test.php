@@ -92,11 +92,11 @@ class Test extends ConsoleCommand
         }
 
         $output->writeln('Redis version: ' . $backend->getServerVersion());
-        $output->writeln('Memory: ' . var_export($backend->getMemoryStats(), 1));
+        // Modification: START
+        // $output->writeln('Memory: ' . var_export($backend->getMemoryStats(), 1));
 
         $redis = $backend->getConnection();
 
-        // Modification: START
         /*$evictionPolicy = $this->getRedisConfig($redis, 'maxmemory-policy');
         $output->writeln('MaxMemory Eviction Policy config: ' . $evictionPolicy);
 
