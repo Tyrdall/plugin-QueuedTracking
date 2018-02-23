@@ -175,7 +175,7 @@ class Test extends ConsoleCommand
             }
         }
 
-        $redis->delete('fooList');
+        $redis->del('fooList');
         $backend->appendValuesToList('fooList', array('value1', 'value2', 'value3'));
         $values = $backend->getFirstXValuesFromList('fooList', 2);
         if ($values == array('value1', 'value2')) {
@@ -208,7 +208,7 @@ class Test extends ConsoleCommand
     private function testRedis(\RedisCluster $redis, $method, $params, $keyToCleanUp, OutputInterface $output)
     {
         if ($keyToCleanUp) {
-            $redis->delete($keyToCleanUp);
+            $redis->del($keyToCleanUp);
         }
 
         $result = call_user_func_array(array($redis, $method), $params);
@@ -222,7 +222,7 @@ class Test extends ConsoleCommand
         }
 
         if ($keyToCleanUp) {
-            $redis->delete($keyToCleanUp);
+            $redis->del($keyToCleanUp);
         }
     }
 }
