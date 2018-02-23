@@ -31,7 +31,9 @@ class Redis implements Backend
     public function testConnection()
     {
         try {
-            $this->connectIfNeeded();
+            // Modification: START
+            // $this->connectIfNeeded();
+            // Modification: END
             return 'TEST' === $this->redis->echo('TEST');
 
         } catch (\Exception $e) {
@@ -43,7 +45,9 @@ class Redis implements Backend
 
     public function getServerVersion()
     {
-        $this->connectIfNeeded();
+        // Modification: START
+        // $this->connectIfNeeded();
+        // Modification: END
 
         $server = $this->redis->info('server');
 
@@ -58,7 +62,9 @@ class Redis implements Backend
 
     public function getMemoryStats()
     {
-        $this->connectIfNeeded();
+        // Modification: START
+        // $this->connectIfNeeded();
+        // Modification: END
 
         $memory = $this->redis->info('memory');
 
@@ -72,7 +78,9 @@ class Redis implements Backend
      */
     public function getTimeToLive($key)
     {
-        $this->connectIfNeeded();
+        // Modification: START
+        // $this->connectIfNeeded();
+        // Modification: END
 
         $ttl = $this->redis->pttl($key);
 
@@ -91,7 +99,9 @@ class Redis implements Backend
 
     public function appendValuesToList($key, $values)
     {
-        $this->connectIfNeeded();
+        // Modification: START
+        // $this->connectIfNeeded();
+        // Modification: END
 
         foreach ($values as $value) {
             $this->redis->rPush($key, $value);
@@ -109,7 +119,9 @@ class Redis implements Backend
             return array();
         }
 
-        $this->connectIfNeeded();
+        // Modification: START
+        // $this->connectIfNeeded();
+        // Modification: END
         $values = $this->redis->lRange($key, 0, $numValues - 1);
 
         return $values;
@@ -121,20 +133,26 @@ class Redis implements Backend
             return;
         }
 
-        $this->connectIfNeeded();
+        // Modification: START
+        // $this->connectIfNeeded();
+        // Modification: END
         $this->redis->ltrim($key, $numValues, -1);
     }
 
     public function getNumValuesInList($key)
     {
-        $this->connectIfNeeded();
+        // Modification: START
+        // $this->connectIfNeeded();
+        // Modification: END
 
         return $this->redis->lLen($key);
     }
 
     public function setIfNotExists($key, $value, $ttlInSeconds)
     {
-        $this->connectIfNeeded();
+        // Modification: START
+        // $this->connectIfNeeded();
+        // Modification: END
         $wasSet = $this->redis->set($key, $value, array('nx', 'ex' => $ttlInSeconds));
 
         return $wasSet;
@@ -154,7 +172,9 @@ class Redis implements Backend
      */
     public function delete($key)
     {
-        $this->connectIfNeeded();
+        // Modification: START
+        // $this->connectIfNeeded();
+        // Modification: END
 
         return $this->redis->del($key) > 0;
     }
@@ -165,7 +185,9 @@ class Redis implements Backend
             return false;
         }
 
-        $this->connectIfNeeded();
+        // Modification: START
+        // $this->connectIfNeeded();
+        // Modification: END
 
         // see http://redis.io/topics/distlock
         $script = 'if redis.call("GET",KEYS[1]) == ARGV[1] then
@@ -185,7 +207,9 @@ end';
 
     public function getKeysMatchingPattern($pattern)
     {
-        $this->connectIfNeeded();
+        // Modification: START
+        // $this->connectIfNeeded();
+        // Modification: END
 
         return $this->redis->keys($pattern);
     }
@@ -196,7 +220,9 @@ end';
             return false;
         }
 
-        $this->connectIfNeeded();
+        // Modification: START
+        // $this->connectIfNeeded();
+        // Modification: END
 
         $script = 'if redis.call("GET",KEYS[1]) == ARGV[1] then
     return redis.call("EXPIRE",KEYS[1], ARGV[2])
@@ -209,7 +235,9 @@ end';
 
     public function get($key)
     {
-        $this->connectIfNeeded();
+        // Modification: START
+        // $this->connectIfNeeded();
+        // Modification: END
 
         return $this->redis->get($key);
     }
@@ -219,7 +247,9 @@ end';
      */
     public function flushAll()
     {
-        $this->connectIfNeeded();
+        // Modification: START
+        // $this->connectIfNeeded();
+        // Modification: END
         $this->redis->flushAll();
     }
 

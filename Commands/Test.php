@@ -125,9 +125,7 @@ class Test extends ConsoleCommand
         $this->testRedis($redis, 'set', array('testKeyWithNx', 'value', array('nx')), 'testKeyWithNx', $output);
         $this->testRedis($redis, 'set', array('testKeyWithEx', 'value', array('ex' => 5)), 'testKeyWithEx', $output);
 
-        // Modification: START
-        $backend->del('foo');
-        // Modification: END
+        $backend->delete('foo');
         if (!$backend->setIfNotExists('foo', 'bar', 5)) {
             $output->writeln("setIfNotExists(foo, bar, 1) does not work, most likely we won't be able to acquire a lock:" . $redis->getLastError());
         } else{
@@ -177,9 +175,7 @@ class Test extends ConsoleCommand
             }
         }
 
-        // Modification: START
-        $redis->del('fooList');
-        // Modification: END
+        $redis->delete('fooList');
         $backend->appendValuesToList('fooList', array('value1', 'value2', 'value3'));
         $values = $backend->getFirstXValuesFromList('fooList', 2);
         if ($values == array('value1', 'value2')) {
@@ -212,9 +208,7 @@ class Test extends ConsoleCommand
     private function testRedis(\RedisCluster $redis, $method, $params, $keyToCleanUp, OutputInterface $output)
     {
         if ($keyToCleanUp) {
-            // Modification: START
-            $redis->del($keyToCleanUp);
-            // Modification: END
+            $redis->delete($keyToCleanUp);
         }
 
         $result = call_user_func_array(array($redis, $method), $params);
@@ -228,9 +222,7 @@ class Test extends ConsoleCommand
         }
 
         if ($keyToCleanUp) {
-            // Modification: START
-            $redis->del($keyToCleanUp);
-            // Modification: END
+            $redis->delete($keyToCleanUp);
         }
     }
 }
