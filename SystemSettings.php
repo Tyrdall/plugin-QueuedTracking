@@ -52,10 +52,10 @@ class SystemSettings extends \Piwik\Settings\Plugin\SystemSettings
 
     // Modification: START
     /** @var Setting */
-    public $useSentinelBackend;
+    // public $useSentinelBackend;
 
     /** @var Setting */
-    public $sentinelMasterName;
+    // public $sentinelMasterName;
     // Modification: END
 
     protected function init()
