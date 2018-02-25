@@ -50,20 +50,16 @@ class SystemSettings extends \Piwik\Settings\Plugin\SystemSettings
     /** @var Setting */
     public $numRequestsToProcess;
 
-    // Modification: START
     /** @var Setting */
-    // public $useSentinelBackend;
+    public $useSentinelBackend;
 
     /** @var Setting */
-    // public $sentinelMasterName;
-    // Modification: END
+    public $sentinelMasterName;
 
     protected function init()
     {
-        // Modification: START
-        // $this->useSentinelBackend = $this->createUseSentinelBackend();
-        // $this->sentinelMasterName = $this->createSetSentinelMasterName();
-        // Modification: END
+        $this->useSentinelBackend = $this->createUseSentinelBackend();
+        $this->sentinelMasterName = $this->createSetSentinelMasterName();
         $this->redisHost = $this->createRedisHostSetting();
         $this->redisPort = $this->createRedisPortSetting();
         $this->redisTimeout = $this->createRedisTimeoutSetting();
