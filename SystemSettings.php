@@ -297,7 +297,7 @@ class SystemSettings extends \Piwik\Settings\Plugin\SystemSettings
 
     public function save()
     {
-        $this->checkMatchHostsAndPorts();
+        // $this->checkMatchHostsAndPorts();
 
         parent::save();
 
