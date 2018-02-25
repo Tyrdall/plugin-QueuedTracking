@@ -58,12 +58,12 @@ class SystemSettings extends \Piwik\Settings\Plugin\SystemSettings
 
     protected function init()
     {
-        // $this->useSentinelBackend = $this->createUseSentinelBackend();
-        // $this->sentinelMasterName = $this->createSetSentinelMasterName();
+        $this->useSentinelBackend = $this->createUseSentinelBackend();
+        $this->sentinelMasterName = $this->createSetSentinelMasterName();
         $this->redisHost = $this->createRedisHostSetting();
         $this->redisPort = $this->createRedisPortSetting();
         $this->redisTimeout = $this->createRedisTimeoutSetting();
-        // $this->redisDatabase = $this->createRedisDatabaseSetting();
+        $this->redisDatabase = $this->createRedisDatabaseSetting();
         $this->redisPassword = $this->createRedisPasswordSetting();
         $this->queueEnabled = $this->createQueueEnabledSetting();
         $this->numQueueWorkers = $this->createNumberOfQueueWorkerSetting();
