@@ -73,7 +73,10 @@ class SystemSettings extends \Piwik\Settings\Plugin\SystemSettings
 
     public function isUsingSentinelBackend()
     {
-        return $this->useSentinelBackend->getValue();
+        // Modification: START
+        // return $this->useSentinelBackend->getValue();
+        return true;
+        // Modification: END
     }
 
     public function getSentinelMasterName()
