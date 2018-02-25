@@ -50,16 +50,20 @@ class SystemSettings extends \Piwik\Settings\Plugin\SystemSettings
     /** @var Setting */
     public $numRequestsToProcess;
 
+    // Modification: START
     /** @var Setting */
     public $useSentinelBackend;
 
     /** @var Setting */
     public $sentinelMasterName;
+    // Modification: END
 
     protected function init()
     {
-        $this->useSentinelBackend = $this->createUseSentinelBackend();
-        $this->sentinelMasterName = $this->createSetSentinelMasterName();
+        // Modification: START
+        // $this->useSentinelBackend = $this->createUseSentinelBackend();
+        // $this->sentinelMasterName = $this->createSetSentinelMasterName();
+        // Modification: END
         $this->redisHost = $this->createRedisHostSetting();
         $this->redisPort = $this->createRedisPortSetting();
         $this->redisTimeout = $this->createRedisTimeoutSetting();
@@ -96,9 +100,11 @@ class SystemSettings extends \Piwik\Settings\Plugin\SystemSettings
             $field->uiControlAttributes = array('size' => 500);
             $field->inlineHelp = 'Remote host or unix socket of the Redis server. Max 500 characters are allowed.';
 
-            if ($self->isUsingSentinelBackend()) {
-                $field->inlineHelp .= $self->getInlineHelpSentinelMultipleServers('hosts');
-            }
+            // Modification: START
+            // if ($self->isUsingSentinelBackend()) {
+            $field->inlineHelp .= $self->getInlineHelpSentinelMultipleServers('hosts');
+            // }
+            // Modification: END
 
             $field->validate = function ($value) use ($self) {
                 $self->checkMultipleServersOnlyConfiguredWhenSentinelIsEnabled($value);
