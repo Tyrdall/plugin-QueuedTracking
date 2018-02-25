@@ -76,8 +76,6 @@ class Test extends ConsoleCommand
         $output->writeln('NumRequestsToProcess: ' . $settings->numRequestsToProcess->getValue());
         $output->writeln('ProcessDuringTrackingRequest: ' . (int) $settings->processDuringTrackingRequest->getValue());
         $output->writeln('QueueEnabled: ' . (int) $settings->queueEnabled->getValue());
-        $output->writeln('UseSentinelBackend: ' . (int) $settings->useSentinelBackend->getValue());
-        $output->writeln('SentinelMasterName: ' . $settings->sentinelMasterName->getValue());
 
         $output->writeln('');
         $output->writeln('<comment>Version / stats:</comment>');
@@ -86,10 +84,6 @@ class Test extends ConsoleCommand
         $output->writeln('Uname: ' . php_uname());
 
         $backend = Queue\Factory::makeBackend();
-
-        if ($backend instanceof Queue\Backend\Sentinel) {
-            $output->writeln('Backend is using sentinel');
-        }
 
         $output->writeln('Redis version: ' . $backend->getServerVersion());
         // Modification: START
