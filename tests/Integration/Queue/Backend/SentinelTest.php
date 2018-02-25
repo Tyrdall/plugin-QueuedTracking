@@ -34,22 +34,6 @@ class SentinelTest extends RedisTest
         parent::tearDown();
     }
 
-    protected function createRedisBackend()
-    {
-        $settings = Factory::getSettings();
-
-        $this->enableRedisSentinel();
-        $this->assertTrue($settings->isUsingSentinelBackend());
-
-        $settings->redisPort->setValue('26379');
-
-        $sentinel = Factory::makeBackend();
-
-        $this->assertTrue($sentinel instanceof Sentinel);
-
-        return $sentinel;
-    }
-
     public function test_canCreateInstanceWithMultipleSentinelAndFallback()
     {
         $settings = Factory::getSettings();

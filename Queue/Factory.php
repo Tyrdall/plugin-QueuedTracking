@@ -56,18 +56,7 @@ class Factory
         $password = $settings->redisPassword->getValue();
         $database = $settings->redisDatabase->getValue();
 
-        if ($settings->isUsingSentinelBackend()) {
-            $masterName = $settings->getSentinelMasterName();
-            if (empty($masterName)) {
-                throw new Exception('You must configure a sentinel master name via `sentinel_master_name="mymaster"` to use the sentinel backend');
-            } else {
-                $redis = new Queue\Backend\Sentinel();
-                $redis->setSentinelMasterName($masterName);
-            }
-        } else {
-            $redis = new Queue\Backend\Redis();
-        }
-
+        $redis = new Queue\Backend\Redis();
         $redis->setConfig($host, $port, $timeout, $password);
         $redis->setDatabase($database);
 
