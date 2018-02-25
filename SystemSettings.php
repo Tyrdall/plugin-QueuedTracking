@@ -50,16 +50,8 @@ class SystemSettings extends \Piwik\Settings\Plugin\SystemSettings
     /** @var Setting */
     public $numRequestsToProcess;
 
-    /** @var Setting */
-    public $useSentinelBackend;
-
-    /** @var Setting */
-    public $sentinelMasterName;
-
     protected function init()
     {
-        $this->useSentinelBackend = $this->createUseSentinelBackend();
-        $this->sentinelMasterName = $this->createSetSentinelMasterName();
         $this->redisHost = $this->createRedisHostSetting();
         $this->redisPort = $this->createRedisPortSetting();
         $this->redisTimeout = $this->createRedisTimeoutSetting();
@@ -69,19 +61,6 @@ class SystemSettings extends \Piwik\Settings\Plugin\SystemSettings
         $this->numQueueWorkers = $this->createNumberOfQueueWorkerSetting();
         $this->numRequestsToProcess = $this->createNumRequestsToProcessSetting();
         $this->processDuringTrackingRequest = $this->createProcessInTrackingRequestSetting();
-    }
-
-    public function isUsingSentinelBackend()
-    {
-        // Modification: START
-        // return $this->useSentinelBackend->getValue();
-        return true;
-        // Modification: END
-    }
-
-    public function getSentinelMasterName()
-    {
-        return $this->sentinelMasterName->getValue();
     }
 
     public function isUsingUnixSocket()
@@ -99,15 +78,7 @@ class SystemSettings extends \Piwik\Settings\Plugin\SystemSettings
             $field->uiControlAttributes = array('size' => 500);
             $field->inlineHelp = 'Remote host or unix socket of the Redis server. Max 500 characters are allowed.';
 
-            // Modification: START
-            // if ($self->isUsingSentinelBackend()) {
-            $field->inlineHelp .= $self->getInlineHelpSentinelMultipleServers('hosts');
-            // }
-            // Modification: END
-
             $field->validate = function ($value) use ($self) {
-                $self->checkMultipleServersOnlyConfiguredWhenSentinelIsEnabled($value);
-
                 if (strlen($value) > 500) {
                     throw new \Exception('Max 500 characters allowed');
                 }
@@ -126,9 +97,6 @@ class SystemSettings extends \Piwik\Settings\Plugin\SystemSettings
         $self = $this;
 
         $default = '6379';
-        if ($this->isUsingSentinelBackend()) {
-            $default = '26379';
-        }
 
         return $this->makeSetting('redisPort', $default, FieldConfig::TYPE_STRING, function (FieldConfig $field) use ($self) {
             $field->title = 'Redis port';
@@ -136,12 +104,7 @@ class SystemSettings extends \Piwik\Settings\Plugin\SystemSettings
             $field->uiControlAttributes = array('size' => 100);
             $field->inlineHelp = 'Port the Redis server is running on. Value should be between 1 and 65535. Use 0 if you are using unix socket to connect to Redis server.';
 
-            if ($self->isUsingSentinelBackend()) {
-                $field->inlineHelp .= $self->getInlineHelpSentinelMultipleServers('ports');
-            }
-
             $field->validate = function ($value) use ($self) {
-                $self->checkMultipleServersOnlyConfiguredWhenSentinelIsEnabled($value);
                 $ports = $self->convertCommaSeparatedValueToArray($value);
 
                 foreach ($ports as $port) {
@@ -270,9 +233,7 @@ class SystemSettings extends \Piwik\Settings\Plugin\SystemSettings
 
                     $systemCheck = new SystemCheck();
 
-                    if (!$self->isUsingSentinelBackend()) {
-                        $systemCheck->checkRedisIsInstalled();
-                    }
+                    $systemCheck->checkRedisIsInstalled();
                     $backend = Factory::makeBackendFromSettings($self);
 
                     $systemCheck->checkConnectionDetails($backend);
@@ -310,26 +271,6 @@ class SystemSettings extends \Piwik\Settings\Plugin\SystemSettings
         });
     }
 
-    public function getInlineHelpSentinelMultipleServers($nameOfSetting)
-    {
-        return 'As you are using Redis Sentinel, you can define multiple ' . $nameOfSetting . ' comma separated. Make sure to specify as many hosts as you have specified ports. For example to configure two servers "127.0.0.1:26379" and "127.0.0.2:26879" specify "127.0.0.1,127.0.0.2" as host and "26379,26879" as ports.';
-    }
-
-    public function checkMultipleServersOnlyConfiguredWhenSentinelIsEnabled($value)
-    {
-        // Modification: START
-        // if ($this->isUsingSentinelBackend()) {
-        return;
-        // }
-        // Modification: END
-
-        $values = $this->convertCommaSeparatedValueToArray($value);
-
-        if (count($values) > 1) {
-            throw new Exception(Piwik::translate('QueuedTracking_MultipleServersOnlyConfigurableIfSentinelEnabled'));
-        }
-    }
-
     public function convertCommaSeparatedValueToArray($value)
     {
         if ($value === '' || $value === false || $value === null) {
@@ -340,37 +281,6 @@ class SystemSettings extends \Piwik\Settings\Plugin\SystemSettings
         $values = array_map('trim', $values);
 
         return $values;
-    }
-
-    private function createUseSentinelBackend()
-    {
-        return $this->makeSetting('useSentinelBackend', $default = false, FieldConfig::TYPE_BOOL, function (FieldConfig $field) {
-            $field->title = 'Enable Redis Sentinel\'';
-            $field->uiControl = FieldConfig::UI_CONTROL_CHECKBOX;
-            $field->uiControlAttributes = array('size' => 3);
-            $field->inlineHelp = 'If enabled, the Redis Sentinel feature will be used. Make sure to update host and port if needed. Once you have enabled and saved the change, you will be able to specify multiple hosts and ports comma separated.';
-        });
-    }
-
-    private function createSetSentinelMasterName()
-    {
-        return $this->makeSetting('sentinelMasterName', $default = 'mymaster', FieldConfig::TYPE_STRING, function (FieldConfig $field) {
-            $field->title = 'Redis Sentinel Master name';
-            $field->uiControl = FieldConfig::UI_CONTROL_TEXT;
-            $field->uiControlAttributes = array('size' => 200);
-            $field->inlineHelp = 'The sentinel master name only needs to be configured if Sentinel is enabled.';
-            $field->validate = function ($value) {
-                if (!empty($value) && strlen($value) > 200) {
-                    throw new \Exception('Max 200 characters are allowed');
-                }
-            };
-            $field->transform = function ($value) {
-                if (empty($value)) {
-                    return '';
-                }
-                return trim($value);
-            };
-        });
     }
 
     public function checkMatchHostsAndPorts()

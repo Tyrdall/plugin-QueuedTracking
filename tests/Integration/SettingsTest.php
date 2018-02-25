@@ -85,15 +85,6 @@ class SettingsTest extends IntegrationTestCase
 
     /**
      * @expectedException \Exception
-     * @expectedExceptionMessage Max 200 characters are allowed
-     */
-    public function test_sentinelMasterName_ShouldFail_IfTooManyCharacters()
-    {
-        $this->settings->sentinelMasterName->setValue(str_pad('1', 201, '1'));
-    }
-
-    /**
-     * @expectedException \Exception
      * @expectedExceptionMessage Max 100 characters
      */
     public function test_redisPassword_ShouldFail_IfMoreThan100CharctersGiven()
@@ -226,80 +217,19 @@ class SettingsTest extends IntegrationTestCase
         $this->assertSame('4', $this->settings->redisPort->getValue());
     }
 
-    public function test_sentinelMasterName_ShouldTrimTheGivenValue_IfNotEmpty()
-    {
-        $this->settings->sentinelMasterName->setValue('');
-        $this->assertSame('', $this->settings->sentinelMasterName->getValue());
-
-        $this->settings->sentinelMasterName->setValue(' test ');
-        $this->assertSame('test', $this->settings->sentinelMasterName->getValue());
-    }
-
-    public function test_useSentinelBackend()
-    {
-        $this->settings->useSentinelBackend->setValue('0');
-        $this->assertFalse($this->settings->useSentinelBackend->getValue());
-
-        $this->settings->useSentinelBackend->setValue('1');
-        $this->assertTrue($this->settings->useSentinelBackend->getValue());
-    }
-
-    /**
-     * @expectedException \Exception
-     * @expectedExceptionMessage QueuedTracking_MultipleServersOnlyConfigurableIfSentinelEnabled
-     */
-    public function test_redisPort_ShouldFailWhenMultipleValuesGiven_IfSentinelNotEnabled()
-    {
-        $this->settings->redisPort->setValue('45,56,788');
-    }
-
-    public function test_redisPort_ShouldNotFailAndConvertToIntWhenMultipleValuesGiven_IfSentinelIsEnabled()
-    {
-        $this->enableRedisSentinel();
-        $this->settings->redisPort->setValue('55 , 44.34 ');
-        $this->assertSame('55,44', $this->settings->redisPort->getValue());
-    }
-
     /**
      * @expectedException \Exception
      * @expectedExceptionMessage A port has to be a number
      */
     public function test_redisPort_ShouldValidateEachPortSeparately_WhenManySpecified()
     {
-        $this->enableRedisSentinel();
         $this->settings->redisPort->setValue('55 , 44.34, 4mk ');
         $this->assertSame('55,44', $this->settings->redisPort->getValue());
-    }
-
-    /**
-     * @expectedException \Exception
-     * @expectedExceptionMessage QueuedTracking_MultipleServersOnlyConfigurableIfSentinelEnabled
-     */
-    public function test_redisHost_ShouldFailWhenMultipleValuesGiven_IfSentinelNotEnabled()
-    {
-        $this->settings->redisHost->setValue('10.0.0.1,127.0.0.1');
-    }
-
-    public function test_redisHost_ShouldNotFailAndTrimWhenMultipleValuesGiven_IfSentinelIsEnabled()
-    {
-        $this->enableRedisSentinel();
-        $this->settings->redisHost->setValue('10.0.0.1 , 127.0.0.2 ');
-        $this->assertSame('10.0.0.1,127.0.0.2', $this->settings->redisHost->getValue());
     }
 
     public function test_queueEnabled_ShouldBeDisabledByDefault()
     {
         $this->assertFalse($this->settings->queueEnabled->getValue());
-    }
-
-    public function test_useSentinelBackend_ShouldBeDisabledByDefault()
-    {
-        $this->assertFalse($this->settings->useSentinelBackend->getValue());
-    }
-
-    public function test_sentinelMasterName_shouldHaveValueByDefault()
-    {
-        $this->assertSame('mymaster', $this->settings->sentinelMasterName->getValue());
     }
 
     public function test_queueEnabled_ShouldConvertAnyValueToBool()
@@ -341,71 +271,12 @@ class SettingsTest extends IntegrationTestCase
         $this->assertTrue($this->settings->processDuringTrackingRequest->getValue());
     }
 
-    public function test_isUsingSentinelBackend()
-    {
-        $this->disableRedisSentinel();
-
-        $this->assertFalse($this->settings->isUsingSentinelBackend());
-
-        $this->enableRedisSentinel('mymaster');
-
-        $this->assertTrue($this->settings->isUsingSentinelBackend());
-    }
-
-    public function test_isUsingSentinelBackend_shouldBeEnabled_IfNoMasterNameIsConfigured()
-    {
-        $this->enableRedisSentinel('');
-
-        $this->assertTrue($this->settings->isUsingSentinelBackend());
-    }
-
-    public function test_getSentinelMasterName()
-    {
-        $this->disableRedisSentinel();
-
-        // default
-        $this->assertSame('mymaster', $this->settings->getSentinelMasterName());
-
-        // custom
-        $this->enableRedisSentinel('mytest');
-
-        $this->assertSame('mytest', $this->settings->getSentinelMasterName());
-
-        // value configured
-        $this->disableRedisSentinel();
-        $this->settings->sentinelMasterName->setValue('test2');
-
-        $this->assertSame('test2', $this->settings->getSentinelMasterName());
-    }
-
     /**
      * @dataProvider getCommaSeparatedValues
      */
     public function test_convertCommaSeparatedValueToArray($stringValue, $expectedArray)
     {
         $this->assertSame($expectedArray, $this->settings->convertCommaSeparatedValueToArray($stringValue));
-    }
-
-    /**
-     * @dataProvider getCommaSeparatedWithMultipleValues
-     * @expectedException \Exception
-     * @expectedExceptionMessage QueuedTracking_MultipleServersOnlyConfigurableIfSentinelEnabled
-     */
-    public function test_checkMultipleServersOnlyConfiguredWhenSentinelIsEnabled_shouldFailWhenMoreThanOneValue_IfSentinelNotEnabled($stringValue)
-    {
-        $this->disableRedisSentinel();
-
-        $this->settings->checkMultipleServersOnlyConfiguredWhenSentinelIsEnabled($stringValue);
-    }
-
-    /**
-     * @dataProvider getCommaSeparatedValues
-     */
-    public function test_checkMultipleServersOnlyConfiguredWhenSentinelIsEnabled_shouldNeverFail_IfSentinelIsEnabled($stringValue, $expectedArray)
-    {
-        $this->enableRedisSentinel();
-        $this->settings->checkMultipleServersOnlyConfiguredWhenSentinelIsEnabled($stringValue);
-        $this->assertTrue(true);
     }
 
     public function getCommaSeparatedWithMultipleValues()
@@ -423,7 +294,6 @@ class SettingsTest extends IntegrationTestCase
      */
     public function test_save_shouldFailIfPortAndHostMismatch()
     {
-        $this->enableRedisSentinel();
         $this->settings->redisPort->setValue('6379,6480,4393');
         $this->settings->redisHost->setValue('127.0.0.1,127.0.0.2');
         $this->settings->save();
