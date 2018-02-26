@@ -27,7 +27,7 @@ class SystemSettings extends \Piwik\Settings\Plugin\SystemSettings
     public $redisHost;
 
     /** @var Setting */
-    public $redisPort;
+    // public $redisPort;
 
     /** @var Setting */
     public $redisTimeout;
@@ -53,7 +53,7 @@ class SystemSettings extends \Piwik\Settings\Plugin\SystemSettings
     protected function init()
     {
         $this->redisHost = $this->createRedisHostSetting();
-        $this->redisPort = $this->createRedisPortSetting();
+        // $this->redisPort = $this->createRedisPortSetting();
         $this->redisTimeout = $this->createRedisTimeoutSetting();
         $this->redisDatabase = $this->createRedisDatabaseSetting();
         $this->redisPassword = $this->createRedisPasswordSetting();
@@ -92,7 +92,7 @@ class SystemSettings extends \Piwik\Settings\Plugin\SystemSettings
         });
     }
 
-    private function createRedisPortSetting()
+    /*private function createRedisPortSetting()
     {
         $self = $this;
 
@@ -130,7 +130,7 @@ class SystemSettings extends \Piwik\Settings\Plugin\SystemSettings
                 return implode(',', $ports);
             };
         });
-    }
+    }*/
 
     private function createRedisTimeoutSetting()
     {
@@ -295,9 +295,9 @@ class SystemSettings extends \Piwik\Settings\Plugin\SystemSettings
         }
     }
 
-    /*public function save()
+    public function save()
     {
-        $this->checkMatchHostsAndPorts();
+        // $this->checkMatchHostsAndPorts();
 
         parent::save();
 
@@ -313,6 +313,6 @@ class SystemSettings extends \Piwik\Settings\Plugin\SystemSettings
                 // it is ok if this fails. then it is most likely not enabled etc.
             }
         }
-    }*/
+    }
 
 }

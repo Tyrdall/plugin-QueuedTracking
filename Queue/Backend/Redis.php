@@ -235,8 +235,10 @@ end';
     protected function connect()
     {
         // Modification: START
+        $hosts = explode(',', $this->host);
+
         // $this->redis = new \Redis();
-        $this->redis = new \RedisCluster(NULL, Array('35.204.65.201:6379', '35.192.41.161:6380', '35.198.212.227:6381'), $this->timeout);
+        $this->redis = new \RedisCluster(NULL, $hosts, $this->timeout);
         // $success = $this->redis->connect($this->host, $this->port, $this->timeout, null, 100);
         $success = $this->redis->info('35.204.65.201:6379');
 
