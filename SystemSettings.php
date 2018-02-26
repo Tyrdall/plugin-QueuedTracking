@@ -27,9 +27,6 @@ class SystemSettings extends \Piwik\Settings\Plugin\SystemSettings
     public $redisHost;
 
     /** @var Setting */
-    // public $redisPort;
-
-    /** @var Setting */
     public $redisTimeout;
 
     /** @var Setting */
@@ -53,7 +50,6 @@ class SystemSettings extends \Piwik\Settings\Plugin\SystemSettings
     protected function init()
     {
         $this->redisHost = $this->createRedisHostSetting();
-        // $this->redisPort = $this->createRedisPortSetting();
         $this->redisTimeout = $this->createRedisTimeoutSetting();
         $this->redisDatabase = $this->createRedisDatabaseSetting();
         $this->redisPassword = $this->createRedisPasswordSetting();
@@ -91,46 +87,6 @@ class SystemSettings extends \Piwik\Settings\Plugin\SystemSettings
             };
         });
     }
-
-    /*private function createRedisPortSetting()
-    {
-        $self = $this;
-
-        $default = '6379';
-
-        return $this->makeSetting('redisPort', $default, FieldConfig::TYPE_STRING, function (FieldConfig $field) use ($self) {
-            $field->title = 'Redis port';
-            $field->uiControl = FieldConfig::UI_CONTROL_TEXT;
-            $field->uiControlAttributes = array('size' => 100);
-            $field->inlineHelp = 'Port the Redis server is running on. Value should be between 1 and 65535. Use 0 if you are using unix socket to connect to Redis server.';
-
-            $field->validate = function ($value) use ($self) {
-                $ports = $self->convertCommaSeparatedValueToArray($value);
-
-                foreach ($ports as $port) {
-                    if (!is_numeric($port)) {
-                        throw new \Exception('A port has to be a number');
-                    }
-
-                    $port = (int) $port;
-
-                    if ($port < 1 && !$this->isUsingUnixSocket()) {
-                        throw new \Exception('Port has to be at least 1');
-                    }
-
-                    if ($port >= 65535) {
-                        throw new \Exception('Port should be max 65535');
-                    }
-                }
-            };
-            $field->transform = function ($value) use ($self) {
-                $ports = $self->convertCommaSeparatedValueToArray($value);
-                $ports = array_map('intval', $ports);
-
-                return implode(',', $ports);
-            };
-        });
-    }*/
 
     private function createRedisTimeoutSetting()
     {
@@ -229,8 +185,6 @@ class SystemSettings extends \Piwik\Settings\Plugin\SystemSettings
                 $value = (bool) $value;
 
                 if ($value) {
-                    $self->checkMatchHostsAndPorts();
-
                     $systemCheck = new SystemCheck();
 
                     $systemCheck->checkRedisIsInstalled();
@@ -283,22 +237,8 @@ class SystemSettings extends \Piwik\Settings\Plugin\SystemSettings
         return $values;
     }
 
-    public function checkMatchHostsAndPorts()
-    {
-        $hosts = $this->redisHost->getValue();
-        $ports = $this->redisPort->getValue();
-        $numHosts = count(explode(',', $hosts));
-        $numPorts = count(explode(',', $ports));
-
-        if (($hosts || $ports) && $numHosts !== $numPorts) {
-            throw new Exception(Piwik::translate('QueuedTracking_NumHostsNotMatchNumPorts'));
-        }
-    }
-
     public function save()
     {
-        // $this->checkMatchHostsAndPorts();
-
         parent::save();
 
         $oldNumWorkers = $this->numQueueWorkers->getOldValue();

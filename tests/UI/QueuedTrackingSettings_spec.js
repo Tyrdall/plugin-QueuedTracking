@@ -36,7 +36,6 @@ describe("QueuedTrackingSettings", function () {
     it("should show an error if queue is enabled and redis connection is wrong", function (done) {
         expect.screenshot('settings_save_error').to.be.captureSelector(selector + ',#notificationContainer', function (page) {
             page.click('label[for=queueEnabled]');
-            page.sendKeys('input[name=redisPort]', '1');
             page.click('.card-content:contains(\'QueuedTracking\') .pluginsSettingsSubmit');
             page.wait(750);
             // hide all cards, except of QueueTracking

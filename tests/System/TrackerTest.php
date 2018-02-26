@@ -208,7 +208,6 @@ class TrackerTest extends SystemTestCase
         $settings->numQueueWorkers->setValue(1);
         $settings->redisDatabase->setValue(15);
         $settings->redisHost->setValue('127.0.0.1');
-        $settings->redisPort->setValue(6379);
         $settings->save();
     }
 

@@ -51,7 +51,6 @@ class Factory
     public static function makeBackendFromSettings(SystemSettings $settings)
     {
         $host     = $settings->redisHost->getValue();
-        $port     = $settings->redisPort->getValue();
         $timeout  = $settings->redisTimeout->getValue();
         $password = $settings->redisPassword->getValue();
         $database = $settings->redisDatabase->getValue();

@@ -68,7 +68,6 @@ class Test extends ConsoleCommand
         $settings = Queue\Factory::getSettings();
         $output->writeln('<comment>Settings that will be used:</comment>');
         $output->writeln('Host: ' . $settings->redisHost->getValue());
-        // $output->writeln('Port: ' . $settings->redisPort->getValue());
         $output->writeln('Timeout: ' . $settings->redisTimeout->getValue());
         $output->writeln('Password: ' . $settings->redisPassword->getValue());
         $output->writeln('Database: ' . $settings->redisDatabase->getValue());

@@ -71,7 +71,6 @@ class SystemCheckTest extends IntegrationTestCase
     {
         $settings = Factory::getSettings();
         $settings->redisHost->setValue($host);
-        $settings->redisPort->setValue($port);
         $settings->redisTimeout->setIsWritableByCurrentUser(true);
         $settings->redisTimeout->setValue($timeout);
         $settings->redisPassword->setValue($password);
