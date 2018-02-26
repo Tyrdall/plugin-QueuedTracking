@@ -47,24 +47,6 @@ class SettingsTest extends IntegrationTestCase
 
     /**
      * @expectedException \Exception
-     * @expectedExceptionMessage Port has to be at least 1
-     */
-    public function test_redisPort_ShouldFail_IfPortIsTooLow()
-    {
-        $this->settings->redisPort->setValue(0);
-    }
-
-    /**
-     * @expectedException \Exception
-     * @expectedExceptionMessage Port should be max 65535
-     */
-    public function test_redisPort_ShouldFail_IfPortIsTooHigh()
-    {
-        $this->settings->redisPort->setValue(65536);
-    }
-
-    /**
-     * @expectedException \Exception
      * @expectedExceptionMessage Max 5 characters
      */
     public function test_redisTimeout_ShouldFail_IfTooLong()
@@ -90,24 +72,6 @@ class SettingsTest extends IntegrationTestCase
     public function test_redisPassword_ShouldFail_IfMoreThan100CharctersGiven()
     {
         $this->settings->redisPassword->setValue(str_pad('4', 102, '4'));
-    }
-
-    /**
-     * @expectedException \Exception
-     * @expectedExceptionMessage Connection to Redis failed
-     */
-    public function test_queueEnabled_ShouldFail_IfEnabledButWrongConnectionDetail()
-    {
-        $this->settings->redisPort->setValue(6378);
-        $this->settings->queueEnabled->setValue(true);
-    }
-
-    public function test_queueEnabled_ShouldNotFail_IfEnabledButWrongConnectionDetail()
-    {
-        $this->settings->redisPort->setValue(6378);
-        $this->settings->queueEnabled->setValue(false);
-
-        $this->assertFalse($this->settings->queueEnabled->getValue());
     }
 
     /**
@@ -211,22 +175,6 @@ class SettingsTest extends IntegrationTestCase
         $this->assertFalse($this->settings->redisTimeout->isWritableByCurrentUser());
     }
 
-    public function test_redisPort_ShouldConvertAValueToInt()
-    {
-        $this->settings->redisPort->setValue('4.45');
-        $this->assertSame('4', $this->settings->redisPort->getValue());
-    }
-
-    /**
-     * @expectedException \Exception
-     * @expectedExceptionMessage A port has to be a number
-     */
-    public function test_redisPort_ShouldValidateEachPortSeparately_WhenManySpecified()
-    {
-        $this->settings->redisPort->setValue('55 , 44.34, 4mk ');
-        $this->assertSame('55,44', $this->settings->redisPort->getValue());
-    }
-
     public function test_queueEnabled_ShouldBeDisabledByDefault()
     {
         $this->assertFalse($this->settings->queueEnabled->getValue());
@@ -286,17 +234,6 @@ class SettingsTest extends IntegrationTestCase
             array('foo, bar , baz'),
             array('foo,bar,baz')
         );
-    }
-
-    /**
-     * @expectedException \Exception
-     * @expectedExceptionMessage QueuedTracking_NumHostsNotMatchNumPorts
-     */
-    public function test_save_shouldFailIfPortAndHostMismatch()
-    {
-        $this->settings->redisPort->setValue('6379,6480,4393');
-        $this->settings->redisHost->setValue('127.0.0.1,127.0.0.2');
-        $this->settings->save();
     }
 
     public function getCommaSeparatedValues()
