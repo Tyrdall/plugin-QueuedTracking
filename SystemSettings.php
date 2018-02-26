@@ -225,7 +225,7 @@ class SystemSettings extends \Piwik\Settings\Plugin\SystemSettings
             $field->title = 'Queue enabled';
             $field->uiControl = FieldConfig::UI_CONTROL_CHECKBOX;
             $field->inlineHelp = 'If enabled, all tracking requests will be written into a queue instead of the directly into the database. Requires a Redis server and phpredis PHP extension.';
-            $field->validate = function ($value) use ($self) {
+            /*$field->validate = function ($value) use ($self) {
                 $value = (bool) $value;
 
                 if ($value) {
@@ -238,7 +238,7 @@ class SystemSettings extends \Piwik\Settings\Plugin\SystemSettings
 
                     $systemCheck->checkConnectionDetails($backend);
                 }
-            };
+            };*/
         });
     }
 
@@ -295,7 +295,7 @@ class SystemSettings extends \Piwik\Settings\Plugin\SystemSettings
         }
     }
 
-    public function save()
+    /*public function save()
     {
         $this->checkMatchHostsAndPorts();
 
@@ -313,6 +313,6 @@ class SystemSettings extends \Piwik\Settings\Plugin\SystemSettings
                 // it is ok if this fails. then it is most likely not enabled etc.
             }
         }
-    }
+    }*/
 
 }
